@@ -8,10 +8,10 @@ This repository demonstrates how to use the [Form Participation API](https://dev
 
 - [🔍 Overview](#-overview)
 - [1️⃣ Event-Based Participation (No Custom Elements)](#1️⃣-event-based-participation-no-custom-elements)
-  - [💡 Example: Inject Hidden Fields on Submit](#💡-example-inject-hidden-fields-on-submit)
+  - [💡 Example: Inject Hidden Fields on Submit](#-example-inject-hidden-fields-on-submit)
 - [2️⃣ Form-Associated Custom Elements](#2️⃣-form-associated-custom-elements)
-  - [💡 Example: Functional Custom Input Element](#💡-example-functional-custom-input-element)
-  - [💡 Example: Submit Multiple Fields](#💡-example-submit-multiple-fields)
+  - [💡 Example: Functional Custom Input Element](#-example-functional-custom-input-element)
+  - [💡 Example: Submit Multiple Fields](#-example-submit-multiple-fields)
 - [🧪 Feature Detection](#-feature-detection)
 - [⚖️ When to Use Which API](#️-when-to-use-which-api)
 - [✅ Summary](#-summary)
@@ -24,20 +24,21 @@ This repository demonstrates how to use the [Form Participation API](https://dev
 
 The **Form Participation API** allows custom elements and arbitrary JS logic to integrate seamlessly with `<form>` submission, validation, reset, and autofill.
 
-It includes two approaches:
+It supports two main approaches:
 
 1. **Event-Based Participation**: Dynamically modify form data using the `formdata` event.
-2. **Form-Associated Custom Elements**: Build custom form controls that act like native inputs.
+2. **Form-Associated Custom Elements**: Build custom form controls that behave like native inputs.
 
 ---
 
 ## 1️⃣ Event-Based Participation (No Custom Elements)
 
-This API lets **any JS object** listen for form submission and dynamically add values using the `formdata` event.
+This method lets **any JavaScript logic** hook into form submission via the `formdata` event to inject data.
 
-### ✅ Great for:
-- Adding user/session data without modifying the DOM.
-- Dynamic or app-driven form enhancements.
+### ✅ Best For:
+
+- Adding user/session or tracking data without modifying the DOM.
+- Enhancing forms dynamically from your app logic.
 
 ---
 
@@ -67,20 +68,33 @@ This API lets **any JS object** listen for form submission and dynamically add v
   addHiddenFieldsOnSubmit(form, dynamicFields);
 </script>
 ```
-📨 Resulting Submission:
+
+📨 **Resulting Submission:**
+
+```
 email=test@example.com
 customer-id=cust-00123
 affiliate-code=AFF-2025
-2️⃣ Form-Associated Custom Elements
-You can build fully functional custom elements that integrate with forms using ElementInternals.
-⚠️ Note: A class is required by the Web Components API, but the logic inside can be 100% functional.
-
-✅ Great for:
-Reusable form inputs like <my-input>, <date-picker>, <credit-card-form>
-
-Full integration with <form>, <label>, and browser validation
-💡 Example: Functional Custom Input Element
 ```
+
+---
+
+## 2️⃣ Form-Associated Custom Elements
+
+You can build fully functional custom elements that integrate with forms using `ElementInternals`.
+
+> ⚠️ Note: A class is required by the Web Components API, but the logic inside can still be 100% functional.
+
+### ✅ Best For:
+
+- Reusable form inputs like `<my-input>`, `<date-picker>`, `<credit-card-form>`
+- Full integration with `<form>`, `<label>`, browser validation
+
+---
+
+### 💡 Example: Functional Custom Input Element
+
+```html
 <form id="signup-form" method="POST" action="/signup">
   <label>
     Name:
@@ -147,9 +161,14 @@ Full integration with <form>, <label>, and browser validation
   customElements.define('my-input', createMyInputElement());
 </script>
 ```
-💡 Example: Submit Multiple Fields
+
+---
+
+### 💡 Example: Submit Multiple Fields
+
 You can also submit multiple key-value pairs using a single custom element:
-```
+
+```js
 function submitMultipleFields(internals, name, values) {
   const data = new FormData();
   for (const [key, val] of Object.entries(values)) {
@@ -158,8 +177,12 @@ function submitMultipleFields(internals, name, values) {
   internals.setFormValue(data);
 }
 ```
-🧪 Feature Detection
-```
+
+---
+
+## 🧪 Feature Detection
+
+```js
 if ('FormDataEvent' in window) {
   console.log("✅ formdata event supported");
 }
@@ -168,23 +191,37 @@ if ('setFormValue' in ElementInternals.prototype) {
   console.log("✅ Form-associated custom elements supported");
 }
 ```
-⚖️ When to Use Which API
-Scenario	formdata Event	Form-Associated Element
-Inject dynamic hidden data	✅	❌
-Custom UI input widget	❌	✅
-Label, Fieldset, Reset support	❌	✅
-Native validation integration	❌	✅
-No DOM manipulation	✅	❌
 
-✅ Summary
-🧠 Use formdata when you want to inject values programmatically.
+---
 
-🧱 Use Form-Associated Custom Elements when you’re building new form controls.
+## ⚖️ When to Use Which API
 
-Both work beautifully together — you can even use both in the same form.
-📚 Resources
-MDN: formdata event
+| Scenario                        | `formdata` Event ✅ | Form-Associated Element ✅ |
+|--------------------------------|---------------------|-----------------------------|
+| Inject dynamic hidden data     | ✅                  | ❌                          |
+| Custom UI input widget         | ❌                  | ✅                          |
+| Label, Fieldset, Reset support | ❌                  | ✅                          |
+| Native validation integration  | ❌                  | ✅                          |
+| No DOM manipulation            | ✅                  | ❌                          |
 
-Spec: Form-Associated Custom Elements
+---
 
-WICG Proposal Discussion
+## ✅ Summary
+
+- 🧠 Use `formdata` when you want to inject values programmatically.
+- 🧱 Use **Form-Associated Custom Elements** when you’re building new form controls.
+- ✅ Both approaches work beautifully together — and can even be used in the same form!
+
+---
+
+## 📚 Resources
+
+- [MDN: `formdata` event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/formdata_event)
+- [Spec: Form-Associated Custom Elements](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements-face-example)
+- [WICG Proposal Discussion](https://github.com/WICG/webcomponents/issues/187)
+
+---
+
+## 📄 License
+
+MIT License
